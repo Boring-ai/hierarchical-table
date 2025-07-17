@@ -1,0 +1,6 @@
+{
+  "name": "Hierarchicaltable",
+  "type": "HierarchicalTable",
+  "entry": "./src/index.jsx",
+  "keywords": "HierarchicalTable"
+}
