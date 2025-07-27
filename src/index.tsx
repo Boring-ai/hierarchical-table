@@ -11,8 +11,7 @@ interface Props {
 }
 
 export default function Hierarchicaltable(props: Props) {
-  const { updateData, data = {}, emitOnClick } = props;
-
+  const { updateData, data, emitOnClick } = props;
 
   return <BaseTable data={data} updateData={updateData} emitOnClick={emitOnClick} />;
 }

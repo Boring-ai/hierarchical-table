@@ -53,16 +53,16 @@ const spanRows: ColDef["spanRows"] = (params) => {
 }
 
 interface Props {
-    data: TableData;
+    data?: TableData;
     updateData: (data: TableData) => void;
     emitOnClick: () => void;
 }
 
 function GridExample(props: Props) {
-    const { emitOnClick, updateData } = props;
-    const { weeks } = props.data;
+    const { emitOnClick, updateData, data = {} } = props;
+    const { weeks } = data;
     const [expandedColumns, setExpandedColumns] = useState<Set<string>>(new Set());
-    const data = useMemo(() => getDataForExpandedColumns(expandedColumns, props.data), [expandedColumns, props.data]);
+    const rowData = useMemo(() => getDataForExpandedColumns(expandedColumns, data), [expandedColumns, data]);
 
     const columnDefs = useMemo<(ColDef<RowData> | ColGroupDef<RowData>)[]>(() => [
         {
@@ -80,7 +80,7 @@ function GridExample(props: Props) {
                 emitOnClick();
             },
             headerComponent: () =>
-                <div className="flex items-center">
+                <div className="flex items-center justify-between flex-1">
                     <span>Product Family</span>
                     <button
                         className="ml-2 p-1 rounded hover:bg-gray-200 transition-colors"
@@ -120,7 +120,7 @@ function GridExample(props: Props) {
                     emitOnClick();
                 },
                 headerComponent: () =>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-1">
                         <span>Product Description</span>
                         <button
                             className="ml-2 p-1 rounded hover:bg-gray-200 transition-colors"
@@ -159,7 +159,7 @@ function GridExample(props: Props) {
             width: 140,
             valueFormatter: (params) => `${params.value} ☆`,
             headerComponent: () =>
-                <div className="flex items-center">
+                <div className="flex items-center justify-between flex-1">
                     <span>Star Bucket</span>
                     <button
                         className="ml-2 p-1 rounded hover:bg-gray-200 transition-colors"
@@ -204,7 +204,7 @@ function GridExample(props: Props) {
         })) as ColGroupDef[] || [])
     ], [expandedColumns, weeks]);
 
-    const domLayout = (data?.length ?? 0) * 40 < 800 ? 'autoHeight' : 'normal';
+    const domLayout = (rowData?.length ?? 0) * 40 < 800 ? 'autoHeight' : 'normal';
 
 
     return (
@@ -213,7 +213,7 @@ function GridExample(props: Props) {
             style={{ width: '100%', height: domLayout === 'autoHeight' ? 'auto' : '800px' }}
         >
             <AgGridReact<RowData>
-                rowData={data}
+                rowData={rowData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 enableCellSpan
