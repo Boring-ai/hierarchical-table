@@ -22,6 +22,7 @@ export interface RowData {
         field: string;
         headerName: string;
         spanRows?: boolean;
+        type?: 'progress' | 'number' | 'text';
     }[]
   }
 

@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
+import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { type ColDef, type ColGroupDef } from "ag-grid-community";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import type { RowData, TableData } from "./types";
 import { Plus } from "lucide-react";
 import { Minus } from "lucide-react";
 import { getDataForExpandedColumns } from "./data";
+import ProgressBarCell from "./ProgressBarCell";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -184,10 +185,21 @@ function GridExample(props: Props) {
             children: week.children.map(child => ({
                 field: child.field,
                 headerName: child.headerName,
-                cellStyle: (params) => {
-                    return {
-                        color: params?.value?.color
+                cellStyle: (params) => ({
+                    color: params?.value?.color
+                }),
+                width: child.type === 'progress' ? 280 : undefined,
+                cellRenderer: (params: CustomCellRendererProps) => {
+                    if (child.type === 'progress') {
+                        const value = params?.value as { value?: number, total?: number, color?: string } | undefined;
+                        if (typeof value?.value !== 'number' || typeof value?.total !== 'number') return null;
+                        return (
+                            <div className="flex items-center justify-center flex-1 h-full">
+                                <ProgressBarCell value={value.value} total={value.total} color={value.color} />
+                            </div>
+                        )
                     }
+                    return params?.value?.value;
                 },
                 spanRows: child.spanRows ? (params) => {
                     const { nodeA, nodeB, valueA, valueB } = params;
